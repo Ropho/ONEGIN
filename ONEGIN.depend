@@ -1,5 +1,7 @@
 # depslib dependency file v1.0
-1629890266 source:c:\users\ya\desktop\onegin\main.cpp
+1629920231 source:c:\users\user\desktop\kekw\check\onegin\main.cpp
+	"TXLib.h"
 	"stdio.h"
 	"string.h"
+	"assert.h"
 
