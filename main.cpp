@@ -120,8 +120,15 @@ void bubble_sort (char array_sort[][column], int lines) {
 }
 
 
-void JOJO_FIILIN (char* str, JOJO ) {
+void JOJO_FIILIN (char* str, JOJO array_) {
 
+    for (int i = 0; i < number_lines; ++i) {
+
+    array_sort[i].str = array_strings[i];
+
+    array_sort[i].len_str = strlen (array_sort[i].str);
+
+    }
                     //юзать strchr
                     //заменять в кнце строки \n на \0
 }
@@ -161,15 +168,7 @@ int main (void) {
 
     JOJO array_sort[number_lines];      //sozdal massiv
 
-    JOJO_FILLIN;
-
-    for (int i = 0; i < number_lines; ++i) {
-
-        array_sort[i].str = array_strings[i];
-
-        array_sort[i].len_str = strlen (array_sort[i].str);
-
-    }                                    //zapolnyayu ego
+    JOJO_FILLIN;                                    //zapolnyayu ego
 
 /*
 
