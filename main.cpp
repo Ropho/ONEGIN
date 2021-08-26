@@ -7,7 +7,7 @@ const int column = 100;
 
 typedef struct JOJO {
     int len_str;
-    char *str;
+    char str[column];
 }JOJO;
 
 
@@ -34,41 +34,16 @@ int FILESIZE_FUNC_VLOB (FILE *in) {
 
 /*
 int FILESIZE_FUNC (FILE *fp) {
-
     assert (fp != NULL);
-
     int save_pos = 0, size_of_file = 0;
-
     save_pos = ftell (fp);
     fseek (fp, 0L, SEEK_END);
     size_of_file = ftell (fp);
     fseek (fp, save_pos, SEEK_SET);
-
     return (size_of_file);
 }
-
-
-void input_from_file (FILE *in, char array_strings[][column], int lines) {
-
-    assert (in != NULL);
-    assert (array_strings != NULL);
-
-    for (int i = 0; i < lines; ++i)
-        fgets (array_strings[i], column , in);
-}
-
-
-void output_in_file (FILE *out, char array_strings[][column], int lines) {
-
-    assert (out != NULL);
-    assert (array_strings != NULL);
-
-    for (int i = 0; i < lines; ++i)
-        fputs (array_strings[i], out);
-
-}
-
 */
+
 int number_lines_in_array (char* str, int filesize) {
 
     assert (str != NULL);
@@ -101,42 +76,102 @@ void copy_arrays (char source[][column], char destination[][column] , int lines)
 }
 
 
-void bubble_sort (char array_sort[][column], int lines) {
+void JOJO_FILLIN (char* str, JOJO* array_sort, int number_lines) {
+
+    assert (str != NULL);
+    assert (array_sort != NULL);
+
+        char *starto = str;
+        char *endo = NULL;
+
+    for (int i = 0; i < number_lines; ++i) {
+
+        if (i == number_lines - 1) {
+
+        strcpy (array_sort[i].str, starto);
+        array_sort[i].len_str = strlen (array_sort[i].str);
+        //printf ("%s %d\n", array_sort[i].str, array_sort[i].len_str);
+        return;
+
+        }
+
+        char *endo = strchr (starto, '\n');
+        *endo = '\0';
+
+        strcpy (array_sort[i].str, starto);
+        array_sort[i].len_str = endo - starto;
+
+        //printf ("%s %d\n", array_sort[i].str, array_sort[i].len_str);
+
+        starto = endo + 1;
+    }
+}
+
+
+void sort_array_BUBBLE (JOJO *str, int lines) {
+
+    assert (str != NULL);
 
      for (int i = 1; i < lines; ++i) {                 //BUBBLE SORT
-            char str[column] = "";
+            JOJO s = {};
 
         for (int j = 0; j < lines - i; ++j) {
 
-            if (strcmp(array_sort[j], array_sort[j+1]) > 0){
+            if (strcmp(str[j].str, str[j+1].str) > 0){
 
-                    strcpy(str, array_sort[j]);
-                    strcpy(array_sort[j], array_sort[j+1]);
-                    strcpy(array_sort[j+1], str);
+                    strcpy(s.str, str[j].str);
+                    s.len_str = str[j].len_str;
+
+                    strcpy(str[j].str, str[j+1].str);
+                    str[j].len_str = str[j+1].len_str;
+
+                    strcpy(str[j+1].str, s.str);
+                    str[j+1].len_str = s.len_str;
 
             }
         }
     }
+
 }
 
 
-void JOJO_FIILIN (char* str, JOJO array_) {
+void output_sorted (JOJO *str, int num_lines, FILE *out) {
 
-    for (int i = 0; i < number_lines; ++i) {
+    assert (str != NULL);
+    assert (out != NULL);
 
-    array_sort[i].str = array_strings[i];
+    for (int i = 0; i < num_lines; ++i) {
 
-    array_sort[i].len_str = strlen (array_sort[i].str);
-
+        fputs (str[i].str, out);
+        fputs ("\n", out);
     }
-                    //юзать strchr
-                    //заменять в кнце строки \n на \0
+    return;
+
 }
+
+
+void output_ne_sorted (char* str, int num_lines, FILE *out) {
+
+    assert (str != NULL);
+    assert (out != NULL);
+
+    char *starto = str;
+
+    for (int i = 0; i < num_lines; ++i) {
+
+        fputs (starto, out);
+        fputs ("\n", out);
+        starto = strchr (starto, '\0');
+        ++starto;
+    }
+    return;
+}
+
 
 int main (void) {
 
     FILE *in = fopen ("HAMLET.txt", "r");
-
+    FILE *out = fopen ("HAMLET_SORTED.txt", "w");
     if (in == NULL) {
         puts ("FILE_NOT_FOUND");
 
@@ -146,8 +181,7 @@ int main (void) {
 
     int filesize = FILESIZE_FUNC_VLOB (in);
 
-    char *array_strings = (char*)malloc(filesize * sizeof(char));
-
+    char *array_strings = (char*)malloc(filesize * sizeof(char) + 1);
     if (array_strings == NULL) {
       puts ("ERROR IN MEMORY ALLOCATION");
 
@@ -160,28 +194,33 @@ int main (void) {
       puts ("ERROR IN READIN FROM FILE");
 
       return ERROR_IN_READING_FROM_FILE;
-  }
+    }
+
+    array_strings[filesize] = '\0';
+
+
     fclose (in);
 
     int number_lines = number_lines_in_array (array_strings,filesize);
 
 
-    JOJO array_sort[number_lines];      //sozdal massiv
+    JOJO array_sort[number_lines] = {};
 
-    JOJO_FILLIN;                                    //zapolnyayu ego
+    JOJO_FILLIN (array_strings, array_sort, number_lines);
 
+    sort_array_BUBBLE (array_sort, number_lines);
+
+    output_sorted (array_sort, number_lines, out);
+
+    output_ne_sorted (array_strings, number_lines, out);
+
+    fclose (out);
 /*
-
     copy_arrays (array_nesort, array_sort, lines);
-
     bubble_sort (array_sort, lines);
-
-
     FILE *out = fopen ("HAMLET_SORTED.txt", "w");
-
         if (out == NULL)
             return ERROR_FILE_INCORRECT;
-
     output_in_file (out, array_sort,   lines);
     output_in_file (out, array_nesort, lines);
     fclose (out);
