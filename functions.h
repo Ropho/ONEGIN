@@ -1,18 +1,20 @@
 #ifndef FUNCTIONS_H_INCLUDED
 #define FUNCTIONS_H_INCLUDED
 
-
+//#include "TXLib.h"
 #include "stdio.h"
 #include "string.h"
 #include "assert.h"
 #include "malloc.h"
-#include "sys\stat.h"
-#include "stdlib.h"
+//#include "sys\stat.h"
+//#include "stdlib.h"
 
 
 const int column = 100;
 
+
 typedef struct JOJO {
+
     int len_str;
     char *str;
 
@@ -27,6 +29,7 @@ ERROR_IN_READING_FROM_FILE = 3
 
 };
 
+void qss (JOJO *a, int first, int last);
 
 int comp (char *str1, char *str2);
 

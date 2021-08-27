@@ -52,12 +52,12 @@ int main (void) {
     //int number_lines = number_lines_in_array_VLOB (array_strings,filesize);
     int number_lines = number_lines_in_array_LEHA (array_strings);
 
-    JOJO array_sort[number_lines] = {};
+    JOJO array_sort[number_lines];
 
     JOJO_FILLIN (array_strings, array_sort, number_lines);
 
 
-    //qsort (array_sort, number_lines, sizeof (JOJO), comp);
+    //qss(array_sort, 0, number_lines - 1);
     sort_array_BUBBLE (array_sort, number_lines);
 
     output_sorted (array_sort, number_lines, out);

@@ -1,5 +1,38 @@
 #include "functions.h"
 
+void qss (JOJO *a, int first, int last) {
+
+    if (first < last)
+    {
+        int left = first, right = last;
+
+        char middle[100] = {};
+
+        strcpy (middle, a[(left + right) / 2].str);
+
+        do
+        {
+            while (strcmp (a[left].str , middle) < 0) left++;
+            while (strcmp (a[right].str, middle) > 0) right--;
+
+            if (left <= right)
+            {
+                char tmp[10] = {};
+                 strcpy (tmp, a[left].str);
+                strcpy(a[left].str, a[right].str);
+                strcpy (a[right].str ,tmp);
+                left++;
+                right--;
+            }
+        } while (left <= right);
+
+        qss (a, first, right);
+
+        qss (a, left, last);
+    }
+}
+
+
 int FILESIZE_FUNC_VLOB (FILE *in) {
 
     assert (in != NULL);
@@ -69,8 +102,6 @@ int number_lines_in_array_LEHA (char* str) {
     assert (str != NULL);
 
     int num_of_lines = 0;
-
-
     char *starto = str;
 
     while (strchr (starto, '\n') != NULL) {
