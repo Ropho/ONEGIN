@@ -15,15 +15,14 @@ typedef struct TEXT {
 
     size_t number_lines;
     size_t filesize;
-
+    char *buffer;
 
 } TEXT;
 
 
 typedef struct JOJO {
 
-    // size_t
-    int len_str;
+    size_t len_str;
     char *str;
 
 }JOJO;
@@ -37,19 +36,20 @@ ALLOCATION_MEMORY_ERROR     = 3,
 ERROR_IN_READING_FROM_FILE  = 4
 
 };
+
 void ouput_separation (FILE *out);
 
-char *rabota (TEXT* text, FILE *in_binary);
+void TEXT_struct_fillin (TEXT* text, FILE *in_binary);
 
 void qss (JOJO *a, int first, int last);
 
-int FILESIZE_FUNC_FSTAT (FILE *in);
+size_t FILESIZE_FUNC_FSTAT (FILE *in);
 
-int number_lines_in_buffer (char* str);
+size_t number_lines_in_buffer (char* str);
 
-void array_sort_fillin (char* str, JOJO* array_sort, int number_lines);
+void pointers_struct_fillin (char* str, JOJO* array_sort, int number_lines);
 
-void sort_array_BUBBLE (JOJO *str, int lines, int (*comparator)(const void*, const void*));
+void pointers_struct_BUBBLE (JOJO *str, int lines, int (*comparator)(const void*, const void*));
 
 void output_sorted (JOJO *str, int num_lines, FILE *out);
 
@@ -59,10 +59,14 @@ char *find_alnum (char *kek);
 
 char *find_alnum_reverse (char *kek);
 
-void sort_array_BUBBLE_reverse (JOJO *str, int lines);
+void pointers_struct_BUBBLE_reverse (JOJO *str, int lines);
 
 int comp_void (const void *first, const void *second);
 
 int comp_void_reverse (const void *first, const void *second);
+
+void pointers_struct_destructor (JOJO *pointers_struct);
+
+void TEXT_struct_destructor (TEXT *text);
 
 #endif // FUNCTIONS_H_INCLUDED

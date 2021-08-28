@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1630159347 source:c:\users\ya\desktop\onegin\main.cpp
+1630182030 source:c:\users\user\desktop\kekw\check\onegin\main.cpp
 	"functions.h"
 
-1630159476 source:c:\users\ya\desktop\onegin\functions.cpp
+1630181975 source:c:\users\user\desktop\kekw\check\onegin\functions.cpp
 	"functions.h"
 
-1630158934 c:\users\ya\desktop\onegin\functions.h
+1630180510 c:\users\user\desktop\kekw\check\onegin\functions.h
 	"stdio.h"
 	"string.h"
 	"assert.h"
@@ -13,4 +13,10 @@
 	"sys\stat.h"
 	"stdlib.h"
 	"ctype.h"
+
+1630091783 source:c:\users\user\desktop\kekw\check\onegin\functions.c
+	"functions.h"
+
+1630092217 source:c:\users\user\desktop\kekw\check\onegin\main.c
+	"functions.h"
 

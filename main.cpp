@@ -13,29 +13,29 @@ int main (void) {
 
     TEXT text = {};
 
-    char *buffer = rabota (&text, in_binary);
+    TEXT_struct_fillin (&text, in_binary);
 
     fclose (in_binary);
 
 
 
-    JOJO *array_sort = (JOJO*)malloc(sizeof (JOJO) * text.number_lines);
+    JOJO *pointers_struct = (JOJO*)calloc(text.number_lines, sizeof (JOJO));
 
-    if (array_sort == NULL) {
+    if (pointers_struct == NULL) {
 
       puts ("ERROR IN MEMORY ALLOCATION");
 
       return ALLOCATION_MEMORY_ERROR;
     }
 
-    array_sort_fillin (buffer, array_sort, text.number_lines);
+    pointers_struct_fillin (text.buffer, pointers_struct, text.number_lines);
 
 
-    //qss(array_sort, 0, number_lines - 1);
+    //qss (pointers_struct, 0, text.number_lines);
 
-    sort_array_BUBBLE (array_sort, text.number_lines, comp_void);
+    //pointers_struct_BUBBLE (pointers_struct, text.number_lines, comp_void);
 
-    // qsort (array_sort, text.number_lines, sizeof (JOJO), comp_void);
+    qsort (pointers_struct, text.number_lines, sizeof (JOJO), comp_void);
 
 
     FILE *out = fopen ("HAMLET_SORTED.txt", "w");
@@ -46,18 +46,19 @@ int main (void) {
         return ERROR_FILE_OUTPUT_INCORRECT;
     }
 
-    output_sorted (array_sort, text.number_lines, out);
+    output_sorted (pointers_struct, text.number_lines, out);
     ouput_separation (out);
-    output_ne_sorted (buffer, text.number_lines, out);
+    output_ne_sorted (text.buffer, text.number_lines, out);
     ouput_separation (out);
 
-    qsort (array_sort, text.number_lines, sizeof (JOJO), comp_void_reverse);
-    //sort_array_BUBBLE_reverse (array_sort, text.number_lines);
-    output_sorted (array_sort, text.number_lines, out);
+    //qsort (pointers_struct, text.number_lines, sizeof (JOJO), comp_void_reverse);
+    pointers_struct_BUBBLE_reverse (pointers_struct, text.number_lines);
+    output_sorted (pointers_struct, text.number_lines, out);
 
-    free (buffer);
-    free (array_sort);
     fclose (out);
+
+    pointers_struct_destructor (pointers_struct);
+    TEXT_struct_destructor (&text);
 
 return 0;
 }

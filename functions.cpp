@@ -1,29 +1,42 @@
 #include "functions.h"
 
-void ouput_separation (FILE *out) {
+void pointers_struct_destructor (JOJO *pointers_struct) {
 
-    assert (out != nullptr);
+    free (pointers_struct);
 
-    fputs ("\n****************************************************************************************************************************************\n"
-           "****************************************************************************************************************************************\n\n", out);
 }
 
-char *rabota (TEXT* text, FILE *in_binary) {
+void TEXT_struct_destructor (TEXT *text) {
 
-    assert (text != nullptr);
-    assert (in_binary != nullptr);
+    free (text);
+}
+
+void ouput_separation (FILE *out) {
+
+    assert (out != NULL);
+
+    fputs ("\n*********************************************************************************"
+           "*******************************************************\n"
+           "***********************************************************************************"
+           "*****************************************************\n\n", out);
+}
+
+void TEXT_struct_fillin (TEXT* text, FILE *in_binary) {
+
+    assert (text != NULL);
+    assert (in_binary != NULL);
 
 
     text->filesize = FILESIZE_FUNC_FSTAT (in_binary);
 
 
-    char *buffer = (char*)malloc(text->filesize * sizeof(char) + 1);
+    text->buffer = (char*)calloc(text->filesize + 1, sizeof(char));
 
-    assert (buffer != nullptr);
+    assert (text->buffer != NULL);
 
 
 
-    if (fread (buffer, sizeof(char), text->filesize, in_binary) != text->filesize) {
+    if (fread (text->buffer, sizeof(char), text->filesize, in_binary) != text->filesize) {
 
       puts ("ERROR IN READIN FROM FILE");
 
@@ -31,11 +44,11 @@ char *rabota (TEXT* text, FILE *in_binary) {
     }
 
 
-    text->number_lines = number_lines_in_buffer (buffer);
+    text->number_lines = number_lines_in_buffer (text->buffer);
 
-    buffer[text->filesize] = '\0';
+    text->buffer[text->filesize] = '\0';
 
-    return buffer;
+    return;
 }
 
 
@@ -51,13 +64,13 @@ void qss (JOJO *a, int first, int last) {
 
         do
         {
-            while (strcmp (a[left].str , middle) < 0) left++;
-            while (strcmp (a[right].str, middle) > 0) right--;
+            while (comp_void (&a[left].str , &middle) < 0) left++;
+            while (comp_void (&a[right].str, &middle) > 0) right--;
 
             if (left <= right)
             {
-                char tmp[10] = {};
-                 strcpy (tmp, a[left].str);
+                char tmp[100] = {};
+                strcpy (tmp, a[left].str);
                 strcpy(a[left].str, a[right].str);
                 strcpy (a[right].str ,tmp);
                 left++;
@@ -73,9 +86,9 @@ void qss (JOJO *a, int first, int last) {
 
 
 
-int FILESIZE_FUNC_FSTAT (FILE *in) {
+size_t FILESIZE_FUNC_FSTAT (FILE *in) {
 
-    assert (in != nullptr);
+    assert (in != NULL);
 
     struct stat buff = {};
 
@@ -85,13 +98,13 @@ int FILESIZE_FUNC_FSTAT (FILE *in) {
 }
 
 
-int number_lines_in_buffer (char* str) {
+size_t number_lines_in_buffer (char* str) {
 
-    assert (str != nullptr);
+    assert (str != NULL);
 
     int num_of_lines = 0;
 
-    while (strchr (str, '\n') != nullptr) {
+    while (strchr (str, '\n') != NULL) {
 
         ++num_of_lines;
         str = strchr (str, '\n') + 1;
@@ -101,10 +114,10 @@ int number_lines_in_buffer (char* str) {
 }
 
 
-void array_sort_fillin (char* str, JOJO* array_sort, int number_lines) {
+void pointers_struct_fillin (char* str, JOJO* array_sort, int number_lines) {
 
-    assert (str != nullptr);
-    assert (array_sort != nullptr);
+    assert (str != NULL);
+    assert (array_sort != NULL);
 
         char *start = str;
         char *finish = NULL;
@@ -122,9 +135,6 @@ void array_sort_fillin (char* str, JOJO* array_sort, int number_lines) {
 
         char *finish = strchr (start, '\n');
 
-        //пофиксить
-       // if (*(finish - 1) == '\r')
-       //     *(finish - 1) =  '\0';
         *finish = '\0';
 
         array_sort[i].str = start;
@@ -135,9 +145,9 @@ void array_sort_fillin (char* str, JOJO* array_sort, int number_lines) {
 }
 
 
-void sort_array_BUBBLE (JOJO *str, int lines, int (*comparator)(const void*, const void*)) {
+void pointers_struct_BUBBLE (JOJO *str, int lines, int (*comparator)(const void*, const void*)) {
 
-    assert (str != nullptr);
+    assert (str != NULL);
 
      for (int i = 1; i < lines; ++i) {
 
@@ -158,13 +168,13 @@ void sort_array_BUBBLE (JOJO *str, int lines, int (*comparator)(const void*, con
 
 void output_sorted (JOJO *str, int num_lines, FILE *out) {
 
-    assert (str != nullptr);
-    assert (out != nullptr);
+    assert (str != NULL);
+    assert (out != NULL);
 
     for (int i = 0; i < num_lines; ++i) {
 
         fputs (str[i].str, out);
-        fputc ('\n', out);
+        //fputc ('\n', out);
     }
     return;
 }
@@ -172,37 +182,40 @@ void output_sorted (JOJO *str, int num_lines, FILE *out) {
 
 void output_ne_sorted (char* str, int num_lines, FILE *out) {
 
-    assert (str != nullptr);
-    assert (out != nullptr);
+    assert (str != NULL);
+    assert (out != NULL);
 
     for (int i = 0; i < num_lines; ++i) {
 
         fputs (str, out);
-        fputc ('\n', out);
+        //fputc ('\n', out);
         str = strchr (str, '\0') + 1;
     }
+    fputc ('\n', out);
+
     return;
 }
 
-char *find_alnum (char *kek) {
 
-    assert (kek != nullptr);
+char *find_alnum (char *ch) {
+
+    assert (ch != NULL);
 
         while (1) {
 
-            if (isalnum (*kek))
-                    return kek;
+            if (isalnum (*ch))
+                    return ch;
 
             else
-                ++kek;
+                ++ch;
         }
 }
 
 
 int comp_void (const void *first, const void *second) {
 
-    assert (first  != nullptr);
-    assert (second != nullptr);
+    assert (first  != NULL);
+    assert (second != NULL);
 
     char *str1 = ((JOJO *)first)  -> str;
     char *str2 = ((JOJO *)second) -> str;
@@ -239,8 +252,8 @@ int comp_void (const void *first, const void *second) {
 
 int comp_void_reverse (const void *first, const void *second) {
 
-    assert (first  != nullptr);
-    assert (second != nullptr);
+    assert (first  != NULL);
+    assert (second != NULL);
 
     char *uno = ((JOJO *)first)  -> str;
     char *duo = ((JOJO *)second) -> str;
@@ -280,24 +293,24 @@ int comp_void_reverse (const void *first, const void *second) {
 
 
 
-char *find_alnum_reverse (char *kek) {
+char *find_alnum_reverse (char *ch) {
 
-    assert (kek != nullptr);
+    assert (ch != NULL);
 
         while (1) {
 
-            if (isalnum (*kek))
-                    return kek;
+            if (isalnum (*ch))
+                    return ch;
 
             else
-                --kek;
+                --ch;
         }
 }
 
 
-void sort_array_BUBBLE_reverse (JOJO *str, int lines) {
+void pointers_struct_BUBBLE_reverse (JOJO *str, int lines) {
 
-    assert (str != nullptr);
+    assert (str != NULL);
 
      for (int i = 1; i < lines; ++i) {
 
