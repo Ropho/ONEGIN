@@ -11,7 +11,7 @@ int main (void) {
         return ERROR_FILE_INPUT_INCORRECT;
     }
 
-    TEXT text;
+    TEXT text = {};
 
     char *buffer = rabota (&text, in_binary);
 
@@ -33,9 +33,9 @@ int main (void) {
 
     //qss(array_sort, 0, number_lines - 1);
 
-    //sort_array_BUBBLE (array_sort, text.number_lines);
+    sort_array_BUBBLE (array_sort, text.number_lines, comp_void);
 
-    qsort (array_sort, text.number_lines, sizeof (JOJO), comp_void);
+    // qsort (array_sort, text.number_lines, sizeof (JOJO), comp_void);
 
 
     FILE *out = fopen ("HAMLET_SORTED.txt", "w");

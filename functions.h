@@ -49,7 +49,7 @@ int number_lines_in_buffer (char* str);
 
 void array_sort_fillin (char* str, JOJO* array_sort, int number_lines);
 
-void sort_array_BUBBLE (JOJO *str, int lines);
+void sort_array_BUBBLE (JOJO *str, int lines, int (*comparator)(const void*, const void*));
 
 void output_sorted (JOJO *str, int num_lines, FILE *out);
 

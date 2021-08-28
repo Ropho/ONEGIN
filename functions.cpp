@@ -135,21 +135,21 @@ void array_sort_fillin (char* str, JOJO* array_sort, int number_lines) {
 }
 
 
-void sort_array_BUBBLE (JOJO *str, int lines) {
+void sort_array_BUBBLE (JOJO *str, int lines, int (*comparator)(const void*, const void*)) {
 
     assert (str != nullptr);
 
      for (int i = 1; i < lines; ++i) {
 
-            JOJO s = {};
+        JOJO s = {};
 
         for (int j = 0; j < lines - i; ++j) {
 
-              if (comp_void (&str[j], &str[j+1]) == 1) {
+              if (comparator (&str[j], &str[j + 1]) == 1) {
 
                     s = str[j];
-                    str[j] = str[j+1];
-                    str[j+1] = s;
+                    str[j] = str[j + 1];
+                    str[j + 1] = s;
             }
         }
     }
@@ -194,18 +194,17 @@ char *find_alnum (char *kek) {
                     return kek;
 
             else
-                kek = kek + 1;
+                ++kek;
         }
 }
 
 
 int comp_void (const void *first, const void *second) {
 
-    assert (first != nullptr);
+    assert (first  != nullptr);
     assert (second != nullptr);
 
-    char *str1 = ((JOJO *)first) -> str;
-
+    char *str1 = ((JOJO *)first)  -> str;
     char *str2 = ((JOJO *)second) -> str;
 
 
@@ -240,11 +239,10 @@ int comp_void (const void *first, const void *second) {
 
 int comp_void_reverse (const void *first, const void *second) {
 
-    assert (first != nullptr);
+    assert (first  != nullptr);
     assert (second != nullptr);
 
-    char *uno = ((JOJO *)first) -> str;
-
+    char *uno = ((JOJO *)first)  -> str;
     char *duo = ((JOJO *)second) -> str;
 
     char *str1 = uno + strlen (uno) - 1;
@@ -292,7 +290,7 @@ char *find_alnum_reverse (char *kek) {
                     return kek;
 
             else
-                kek = kek - 1;
+                --kek;
         }
 }
 
