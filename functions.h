@@ -8,13 +8,21 @@
 #include "malloc.h"
 #include "sys\stat.h"
 #include "stdlib.h"
+#include "ctype.h"
 
 
-const int column = 100;
+typedef struct TEXT {
+
+    size_t number_lines;
+    size_t filesize;
+
+
+} TEXT;
 
 
 typedef struct JOJO {
 
+    // size_t
     int len_str;
     char *str;
 
@@ -23,29 +31,23 @@ typedef struct JOJO {
 
 enum ERRORS {
 
-ERROR_FILE_INCORRECT       = 1,
-ALLOCATION_MEMORY_ERROR    = 2,
-ERROR_IN_READING_FROM_FILE = 3
+ERROR_FILE_INPUT_INCORRECT  = 1,
+ERROR_FILE_OUTPUT_INCORRECT = 2,
+ALLOCATION_MEMORY_ERROR     = 3,
+ERROR_IN_READING_FROM_FILE  = 4
 
 };
+void ouput_separation (FILE *out);
+
+char *rabota (TEXT* text, FILE *in_binary);
 
 void qss (JOJO *a, int first, int last);
 
-int comp (char *str1, char *str2);
-
-int ass_comp (char *uno, char *duo);
-
-int FILESIZE_FUNC_VLOB (FILE *in);
-
-int FILESIZE_FUNC (FILE *in);
-
 int FILESIZE_FUNC_FSTAT (FILE *in);
 
-int number_lines_in_array_LEHA (char* str);
+int number_lines_in_buffer (char* str);
 
-void copy_arrays (char source[][column], char destination[][column] , int lines);
-
-void JOJO_FILLIN (char* str, JOJO* array_sort, int number_lines);
+void array_sort_fillin (char* str, JOJO* array_sort, int number_lines);
 
 void sort_array_BUBBLE (JOJO *str, int lines);
 
@@ -53,14 +55,14 @@ void output_sorted (JOJO *str, int num_lines, FILE *out);
 
 void output_ne_sorted (char* str, int num_lines, FILE *out);
 
-char *check (char *kek);
+char *find_alnum (char *kek);
 
-char *ass_check (char *kek);
+char *find_alnum_reverse (char *kek);
 
-void ass_sort_array_BUBBLE (JOJO *str, int lines);
+void sort_array_BUBBLE_reverse (JOJO *str, int lines);
 
 int comp_void (const void *first, const void *second);
 
-int comp_void_ass (const void *first, const void *second);
+int comp_void_reverse (const void *first, const void *second);
 
 #endif // FUNCTIONS_H_INCLUDED

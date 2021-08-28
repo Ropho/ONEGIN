@@ -1,83 +1,63 @@
 #include "functions.h"
 
-
-
 int main (void) {
 
-    FILE *in = fopen ("HAMLET.txt", "r");
-    FILE *out = fopen ("HAMLET_SORTED.txt", "w");
     FILE *in_binary = fopen ("HAMLET.txt", "rb");
-    FILE *ass_out = fopen ("HAMLET_ASS.txt", "w");
 
-    if (in == NULL || out == NULL || in_binary == NULL || ass_out == NULL) {
+    if ( in_binary == NULL) {
 
-        puts ("FILE_NOT_FOUND");
+        puts ("FILE_INPUT_NOT_FOUND");
 
-        return ERROR_FILE_INCORRECT;
+        return ERROR_FILE_INPUT_INCORRECT;
     }
 
+    TEXT text;
 
-    int filesize = FILESIZE_FUNC_VLOB (in);
+    char *buffer = rabota (&text, in_binary);
 
-    //int filesize_LEHA = FILESIZE_FUNC_FSTAT (in_binary);
-
-    //int filesize_NEVLOB = FILESIZE_FUNC (in_binary);
-
-    //printf ("%d\n%d\n%d", filesize, filesize_LEHA, filesize_NEVLOB);
-    //return 0;
-    /////
+    fclose (in_binary);
 
 
 
+    JOJO *array_sort = (JOJO*)malloc(sizeof (JOJO) * text.number_lines);
 
-    char *array_strings = (char*)malloc(filesize * sizeof(char) + 1);
-
-    if (array_strings == NULL) {
+    if (array_sort == NULL) {
 
       puts ("ERROR IN MEMORY ALLOCATION");
 
       return ALLOCATION_MEMORY_ERROR;
     }
 
-    fseek (in, 0, SEEK_SET);
-
-    if (fread (array_strings, 1, filesize, in) != filesize) {
-
-      puts ("ERROR IN READIN FROM FILE");
-
-      return ERROR_IN_READING_FROM_FILE;
-    }
-
-    array_strings[filesize] = '\0';
-
-
-    //int number_lines = number_lines_in_array_VLOB (array_strings,filesize);
-    int number_lines = number_lines_in_array_LEHA (array_strings);
-
-    JOJO array_sort[number_lines];
-
-    JOJO_FILLIN (array_strings, array_sort, number_lines);
+    array_sort_fillin (buffer, array_sort, text.number_lines);
 
 
     //qss(array_sort, 0, number_lines - 1);
 
-    //sort_array_BUBBLE (array_sort, number_lines);
+    //sort_array_BUBBLE (array_sort, text.number_lines);
 
-    qsort (array_sort, number_lines, sizeof (JOJO), comp_void);
-
-    output_sorted (array_sort, number_lines, out);
-    output_ne_sorted (array_strings, number_lines, out);
+    qsort (array_sort, text.number_lines, sizeof (JOJO), comp_void);
 
 
-    qsort (array_sort, number_lines, sizeof (JOJO), comp_void_ass);
-    ass_sort_array_BUBBLE (array_sort, number_lines);
-    output_sorted (array_sort, number_lines, ass_out);
+    FILE *out = fopen ("HAMLET_SORTED.txt", "w");
+    if (out == NULL) {
 
+        puts ("FILE_INPUT_NOT_FOUND");
 
-    fclose (in);
+        return ERROR_FILE_OUTPUT_INCORRECT;
+    }
+
+    output_sorted (array_sort, text.number_lines, out);
+    ouput_separation (out);
+    output_ne_sorted (buffer, text.number_lines, out);
+    ouput_separation (out);
+
+    qsort (array_sort, text.number_lines, sizeof (JOJO), comp_void_reverse);
+    //sort_array_BUBBLE_reverse (array_sort, text.number_lines);
+    output_sorted (array_sort, text.number_lines, out);
+
+    free (buffer);
+    free (array_sort);
     fclose (out);
-    fclose (in_binary);
-    fclose (ass_out);
 
 return 0;
 }

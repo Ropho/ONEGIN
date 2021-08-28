@@ -1,5 +1,44 @@
 #include "functions.h"
 
+void ouput_separation (FILE *out) {
+
+    assert (out != nullptr);
+
+    fputs ("\n****************************************************************************************************************************************\n"
+           "****************************************************************************************************************************************\n\n", out);
+}
+
+char *rabota (TEXT* text, FILE *in_binary) {
+
+    assert (text != nullptr);
+    assert (in_binary != nullptr);
+
+
+    text->filesize = FILESIZE_FUNC_FSTAT (in_binary);
+
+
+    char *buffer = (char*)malloc(text->filesize * sizeof(char) + 1);
+
+    assert (buffer != nullptr);
+
+
+
+    if (fread (buffer, sizeof(char), text->filesize, in_binary) != text->filesize) {
+
+      puts ("ERROR IN READIN FROM FILE");
+
+      assert (0);
+    }
+
+
+    text->number_lines = number_lines_in_buffer (buffer);
+
+    buffer[text->filesize] = '\0';
+
+    return buffer;
+}
+
+
 void qss (JOJO *a, int first, int last) {
 
     if (first < last)
@@ -33,39 +72,10 @@ void qss (JOJO *a, int first, int last) {
 }
 
 
-int FILESIZE_FUNC_VLOB (FILE *in) {
-
-    assert (in != NULL);
-
-	int file_size = 0;
-	fseek (in, 0, SEEK_SET);
-
-
-    while (getc(in) != EOF)
-        file_size++;
-
-	return file_size;
-}
-
-
-int FILESIZE_FUNC (FILE *in) {
-
-    assert (in != NULL);
-
-    int size_of_file = 0;
-
-    fseek (in, 0, SEEK_END);
-
-    size_of_file = ftell (in);
-
-    fseek (in, 0, SEEK_SET);
-
-    return (size_of_file);
-}
-
 
 int FILESIZE_FUNC_FSTAT (FILE *in) {
-    assert (in != NULL);
+
+    assert (in != nullptr);
 
     struct stat buff = {};
 
@@ -75,84 +85,59 @@ int FILESIZE_FUNC_FSTAT (FILE *in) {
 }
 
 
-/*
-int number_lines_in_array_VLOB (char* str, int filesize) {
-    assert (str != NULL);
-    int num_of_lines = 0, i = 0;
-    while (i < filesize) {
-        if (*(str + i) == '\n')
-            num_of_lines++;
-        ++i;
-    }
-    num_of_lines++;
-    return num_of_lines;
-}
-*/
+int number_lines_in_buffer (char* str) {
 
-int number_lines_in_array_LEHA (char* str) {
-
-    assert (str != NULL);
+    assert (str != nullptr);
 
     int num_of_lines = 0;
-    char *starto = str;
 
-    while (strchr (starto, '\n') != NULL) {
+    while (strchr (str, '\n') != nullptr) {
 
         ++num_of_lines;
-        starto = strchr (starto, '\n') + 1;
+        str = strchr (str, '\n') + 1;
     }
 
     return num_of_lines + 1;
 }
 
 
-void copy_arrays (char source[][column], char destination[][column] , int lines) {
+void array_sort_fillin (char* str, JOJO* array_sort, int number_lines) {
 
-     assert (source != NULL);
-     assert (destination != NULL);
+    assert (str != nullptr);
+    assert (array_sort != nullptr);
 
-     for (int i = 0; i < lines; ++i)
-        strcpy (destination[i], source[i]);
-
-     return;
-}
-
-
-void JOJO_FILLIN (char* str, JOJO* array_sort, int number_lines) {
-
-    assert (str != NULL);
-    assert (array_sort != NULL);
-
-        char *starto = str;
-        char *endo = NULL;
+        char *start = str;
+        char *finish = NULL;
 
     for (int i = 0; i < number_lines; ++i) {
 
         if (i == number_lines - 1) {
 
-        array_sort[i].str = starto;
+        array_sort[i].str = start;
         array_sort[i].len_str = strlen (array_sort[i].str);
-        //printf ("%s %d\n", array_sort[i].str, array_sort[i].len_str);
+
         return;
 
         }
 
-        char *endo = strchr (starto, '\n');
-        *endo = '\0';
+        char *finish = strchr (start, '\n');
 
-        array_sort[i].str = starto;
-        array_sort[i].len_str = endo - starto;
+        //пофиксить
+       // if (*(finish - 1) == '\r')
+       //     *(finish - 1) =  '\0';
+        *finish = '\0';
 
-        //printf ("%s %d\n", array_sort[i].str, array_sort[i].len_str);
+        array_sort[i].str = start;
+        array_sort[i].len_str = finish - start;
 
-        starto = endo + 1;
+        start = finish + 1;
     }
 }
 
 
 void sort_array_BUBBLE (JOJO *str, int lines) {
 
-    assert (str != NULL);
+    assert (str != nullptr);
 
      for (int i = 1; i < lines; ++i) {
 
@@ -160,18 +145,11 @@ void sort_array_BUBBLE (JOJO *str, int lines) {
 
         for (int j = 0; j < lines - i; ++j) {
 
-          //  if (strcmp(str[j].str, str[j+1].str) > 0) {
-              if (comp (str[j].str, str[j+1].str) == 1) {
+              if (comp_void (&str[j], &str[j+1]) == 1) {
 
-                    s.str = str[j].str;
-                    s.len_str = str[j].len_str;
-
-                    str[j].str = str[j+1].str;
-                    str[j].len_str = str[j+1].len_str;
-
-                    str[j+1].str = s.str;
-                    str[j+1].len_str = s.len_str;
-
+                    s = str[j];
+                    str[j] = str[j+1];
+                    str[j+1] = s;
             }
         }
     }
@@ -180,13 +158,13 @@ void sort_array_BUBBLE (JOJO *str, int lines) {
 
 void output_sorted (JOJO *str, int num_lines, FILE *out) {
 
-    assert (str != NULL);
-    assert (out != NULL);
+    assert (str != nullptr);
+    assert (out != nullptr);
 
     for (int i = 0; i < num_lines; ++i) {
 
         fputs (str[i].str, out);
-        fputs ("\n", out);
+        fputc ('\n', out);
     }
     return;
 }
@@ -194,77 +172,47 @@ void output_sorted (JOJO *str, int num_lines, FILE *out) {
 
 void output_ne_sorted (char* str, int num_lines, FILE *out) {
 
-    assert (str != NULL);
-    assert (out != NULL);
-
-    char *starto = str;
+    assert (str != nullptr);
+    assert (out != nullptr);
 
     for (int i = 0; i < num_lines; ++i) {
 
-        fputs (starto, out);
-        fputs ("\n", out);
-        starto = strchr (starto, '\0');
-        ++starto;
+        fputs (str, out);
+        fputc ('\n', out);
+        str = strchr (str, '\0') + 1;
     }
     return;
 }
 
-char *check (char *kek) {
+char *find_alnum (char *kek) {
 
-    assert (kek != NULL);
-
-    char *str = kek;
+    assert (kek != nullptr);
 
         while (1) {
 
-            if ((*(str) >= '0') && (*(str) <= '9')  || (*(str) >= 'A') && (*(str) <= 'Z') || (*(str) >= 'a') && (*(str) <= 'z'))
-                    return str;
+            if (isalnum (*kek))
+                    return kek;
 
             else
-                str = str + 1;
+                kek = kek + 1;
         }
 }
 
+
 int comp_void (const void *first, const void *second) {
 
-    assert (first != NULL);
-    assert (second != NULL);
+    assert (first != nullptr);
+    assert (second != nullptr);
 
-    char *l = ((JOJO *)first) -> str;
+    char *str1 = ((JOJO *)first) -> str;
 
-    char *r = ((JOJO *)second) -> str;
-
-    return comp (l , r);
-
-
-}
-
-int comp_void_ass (const void *first, const void *second) {
-
-    assert (first != NULL);
-    assert (second != NULL);
-
-    char *l = ((JOJO *)first) -> str;
-
-    char *r = ((JOJO *)second) -> str;
-
-    return ass_comp (l , r);
-
-
-}
-int comp (char *uno, char *duo) {
-
-    assert (uno != NULL);
-    assert (duo != NULL);
-
-    char *str1 = uno;
-    char *str2 = duo;
+    char *str2 = ((JOJO *)second) -> str;
 
 
     while (*str1 != '\0' && *str2 != '\0') {
 
-            str1 = check (str1);
-            str2 = check (str2);
+            str1 = find_alnum (str1);
+            str2 = find_alnum (str2);
 
             if (*str1 > *str2) {
 
@@ -289,26 +237,15 @@ int comp (char *uno, char *duo) {
     else return 1;
 }
 
-char *ass_check (char *kek) {
 
-    assert (kek != NULL);
+int comp_void_reverse (const void *first, const void *second) {
 
-    char *str = kek;
+    assert (first != nullptr);
+    assert (second != nullptr);
 
-        while (1) {
+    char *uno = ((JOJO *)first) -> str;
 
-            if ((*(str) >= '0') && (*(str) <= '9')  || (*(str) >= 'A') && (*(str) <= 'Z') || (*(str) >= 'a') && (*(str) <= 'z'))
-                    return str;
-
-            else
-                str = str - 1;
-        }
-}
-
-int ass_comp (char *uno, char *duo) {
-
-    assert (uno != NULL);
-    assert (duo != NULL);
+    char *duo = ((JOJO *)second) -> str;
 
     char *str1 = uno + strlen (uno) - 1;
     char *str2 = duo + strlen (duo) - 1;
@@ -316,8 +253,8 @@ int ass_comp (char *uno, char *duo) {
 
     while (str1 != uno && str2 != duo) {
 
-            str1 = ass_check (str1);
-            str2 = ass_check (str2);
+            str1 = find_alnum_reverse (str1);
+            str2 = find_alnum_reverse (str2);
 
             if (*str1 > *str2) {
 
@@ -344,9 +281,25 @@ int ass_comp (char *uno, char *duo) {
 }
 
 
-void ass_sort_array_BUBBLE (JOJO *str, int lines) {
 
-    assert (str != NULL);
+char *find_alnum_reverse (char *kek) {
+
+    assert (kek != nullptr);
+
+        while (1) {
+
+            if (isalnum (*kek))
+                    return kek;
+
+            else
+                kek = kek - 1;
+        }
+}
+
+
+void sort_array_BUBBLE_reverse (JOJO *str, int lines) {
+
+    assert (str != nullptr);
 
      for (int i = 1; i < lines; ++i) {
 
@@ -354,17 +307,13 @@ void ass_sort_array_BUBBLE (JOJO *str, int lines) {
 
         for (int j = 0; j < lines - i; ++j) {
 
-          //  if (strcmp(str[j].str, str[j+1].str) > 0) {
-              if (ass_comp (str[j].str, str[j+1].str) == 1) {
+              if (comp_void_reverse (&str[j], &str[j+1]) == 1) {
 
-                    s.str = str[j].str;
-                    s.len_str = str[j].len_str;
+                    s = str[j];
 
-                    str[j].str = str[j+1].str;
-                    str[j].len_str = str[j+1].len_str;
+                    str[j] = str[j+1];
 
-                    str[j+1].str = s.str;
-                    str[j+1].len_str = s.len_str;
+                    str[j+1] = s;
 
             }
         }
