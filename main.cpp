@@ -21,7 +21,9 @@ int main (void) {
 
     //int filesize_LEHA = FILESIZE_FUNC_FSTAT (in_binary);
 
-    //printf ("%d\n", filesize);
+    //int filesize_NEVLOB = FILESIZE_FUNC (in_binary);
+
+    //printf ("%d\n%d\n%d", filesize, filesize_LEHA, filesize_NEVLOB);
     //return 0;
     /////
 
@@ -58,13 +60,16 @@ int main (void) {
 
 
     //qss(array_sort, 0, number_lines - 1);
-    sort_array_BUBBLE (array_sort, number_lines);
+
+    //sort_array_BUBBLE (array_sort, number_lines);
+
+    qsort (array_sort, number_lines, sizeof (JOJO), comp_void);
 
     output_sorted (array_sort, number_lines, out);
-
     output_ne_sorted (array_strings, number_lines, out);
 
 
+    qsort (array_sort, number_lines, sizeof (JOJO), comp_void_ass);
     ass_sort_array_BUBBLE (array_sort, number_lines);
     output_sorted (array_sort, number_lines, ass_out);
 

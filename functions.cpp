@@ -63,36 +63,28 @@ int FILESIZE_FUNC (FILE *in) {
     return (size_of_file);
 }
 
-/*
-int FILESIZE_FUNC_FSTAT (FILE *in) {
 
+int FILESIZE_FUNC_FSTAT (FILE *in) {
     assert (in != NULL);
 
-    struct stat buff;
+    struct stat buff = {};
 
     fstat (fileno (in), &buff);
 
     return buff.st_size;
 }
-*/
+
 
 /*
 int number_lines_in_array_VLOB (char* str, int filesize) {
-
     assert (str != NULL);
-
     int num_of_lines = 0, i = 0;
-
     while (i < filesize) {
-
         if (*(str + i) == '\n')
             num_of_lines++;
-
         ++i;
     }
-
     num_of_lines++;
-
     return num_of_lines;
 }
 */
@@ -233,8 +225,33 @@ char *check (char *kek) {
         }
 }
 
+int comp_void (const void *first, const void *second) {
+
+    assert (first != NULL);
+    assert (second != NULL);
+
+    char *l = ((JOJO *)first) -> str;
+
+    char *r = ((JOJO *)second) -> str;
+
+    return comp (l , r);
 
 
+}
+
+int comp_void_ass (const void *first, const void *second) {
+
+    assert (first != NULL);
+    assert (second != NULL);
+
+    char *l = ((JOJO *)first) -> str;
+
+    char *r = ((JOJO *)second) -> str;
+
+    return ass_comp (l , r);
+
+
+}
 int comp (char *uno, char *duo) {
 
     assert (uno != NULL);
@@ -288,13 +305,13 @@ char *ass_check (char *kek) {
         }
 }
 
-int ass_comp (char *uno, char *duo, int len1, int len2) {
+int ass_comp (char *uno, char *duo) {
 
     assert (uno != NULL);
     assert (duo != NULL);
 
-    char *str1 = uno + len1 - 1;
-    char *str2 = duo + len2 - 1;
+    char *str1 = uno + strlen (uno) - 1;
+    char *str2 = duo + strlen (duo) - 1;
 
 
     while (str1 != uno && str2 != duo) {
@@ -338,7 +355,7 @@ void ass_sort_array_BUBBLE (JOJO *str, int lines) {
         for (int j = 0; j < lines - i; ++j) {
 
           //  if (strcmp(str[j].str, str[j+1].str) > 0) {
-              if (ass_comp (str[j].str, str[j+1].str, str[j].len_str, str[j+1].len_str) == 1) {
+              if (ass_comp (str[j].str, str[j+1].str) == 1) {
 
                     s.str = str[j].str;
                     s.len_str = str[j].len_str;
@@ -353,11 +370,3 @@ void ass_sort_array_BUBBLE (JOJO *str, int lines) {
         }
     }
 }
-
-
-/*
-int cmp (const void *a, const void *b) {
-     return comp ((*JOJO))
-     return *(int*)a - *(int*)b;
- }
-*/

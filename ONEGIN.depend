@@ -1,19 +1,15 @@
 # depslib dependency file v1.0
-1630092217 source:c:\users\user\desktop\kekw\check\onegin\main.cpp
+1630137396 source:c:\users\ya\desktop\onegin\main.cpp
 	"functions.h"
 
-1630092391 source:c:\users\user\desktop\kekw\check\onegin\functions.cpp
+1630137667 source:c:\users\ya\desktop\onegin\functions.cpp
 	"functions.h"
 
-1630092325 c:\users\user\desktop\kekw\check\onegin\functions.h
+1630137655 c:\users\ya\desktop\onegin\functions.h
 	"stdio.h"
 	"string.h"
 	"assert.h"
 	"malloc.h"
-
-1630091783 source:c:\users\user\desktop\kekw\check\onegin\functions.c
-	"functions.h"
-
-1630092217 source:c:\users\user\desktop\kekw\check\onegin\main.c
-	"functions.h"
+	"sys\stat.h"
+	"stdlib.h"
 

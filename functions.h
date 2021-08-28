@@ -6,8 +6,8 @@
 #include "string.h"
 #include "assert.h"
 #include "malloc.h"
-//#include "sys\stat.h"
-//#include "stdlib.h"
+#include "sys\stat.h"
+#include "stdlib.h"
 
 
 const int column = 100;
@@ -33,11 +33,13 @@ void qss (JOJO *a, int first, int last);
 
 int comp (char *str1, char *str2);
 
-int ass_comp (char *uno, char *duo, int len1, int len2);
+int ass_comp (char *uno, char *duo);
 
 int FILESIZE_FUNC_VLOB (FILE *in);
 
 int FILESIZE_FUNC (FILE *in);
+
+int FILESIZE_FUNC_FSTAT (FILE *in);
 
 int number_lines_in_array_LEHA (char* str);
 
@@ -57,5 +59,8 @@ char *ass_check (char *kek);
 
 void ass_sort_array_BUBBLE (JOJO *str, int lines);
 
+int comp_void (const void *first, const void *second);
+
+int comp_void_ass (const void *first, const void *second);
 
 #endif // FUNCTIONS_H_INCLUDED
