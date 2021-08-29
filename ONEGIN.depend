@@ -1,11 +1,11 @@
 # depslib dependency file v1.0
-1630247344 source:c:\users\ya\desktop\onegin\main.cpp
+1630256478 source:c:\users\ya\desktop\onegin\main.cpp
 	"functions.h"
 
-1630247298 source:c:\users\ya\desktop\onegin\functions.cpp
+1630256689 source:c:\users\ya\desktop\onegin\functions.cpp
 	"functions.h"
 
-1630245962 c:\users\ya\desktop\onegin\functions.h
+1630252136 c:\users\ya\desktop\onegin\functions.h
 	"TXLib.h"
 	"stdio.h"
 	"string.h"

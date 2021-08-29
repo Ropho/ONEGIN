@@ -1,5 +1,16 @@
-//! @mainpage
-
+/*!
+@mainpage HELLO, USERS OF THE "ONEGIN" PROGRAM
+================================================================================================
+1. Program sorts given text in RUSSIAN and ENGLISH and prints out
+    1. sorted in alphabetical order
+    2. original text
+    3. sorted in reversed alphabetical order
+2. To sort u can use different sort functions (just uncomment the right one)
+    1. BUBBLE sort
+    2. QSORT function in c
+    3. QSORT function made by me
+*/
+//=======================================================================================================
 
 #ifndef FUNCTIONS_H_INCLUDED
 #define FUNCTIONS_H_INCLUDED
@@ -14,7 +25,7 @@
 #include "ctype.h"
 #include "locale.h"
 
-//!
+//! determines the structure JOJO (array of pointers)
 typedef struct JOJO {
 
     size_t len_str;
@@ -22,7 +33,7 @@ typedef struct JOJO {
 
 }JOJO;
 
-
+//! determines the structure TEXT
 typedef struct TEXT {
 
     size_t number_lines;
@@ -32,6 +43,7 @@ typedef struct TEXT {
 } TEXT;
 
 
+//! determines errors with its integer numbers
 enum ERRORS {
 
 ERROR_FILE_INPUT_INCORRECT  = 1,
@@ -43,7 +55,7 @@ ERROR_IN_FILLIN_BUFFER      = 5
 
 //! \brief prints '*' symbols to separate sorted text, not sorted text, and reversed sorted text
 //! \param[in] out - file, in which we want to separate texts
-void ouput_separation (FILE *out);
+void output_separation (FILE *out);
 
 //! \brief fills in the parameters of the structure TEXT using the given file
 //! \param[in] text - pointer on the structure TEXT
@@ -51,8 +63,10 @@ void ouput_separation (FILE *out);
 //! \return 0 if input is ok, not zero if error in input
 int TEXT_struct_fillin (TEXT* text, FILE *in_binary);
 
-//! \brief quicksort
-void qss (JOJO *a, int number_linesm, int (*comparator)(const void*, const void*));
+//! \brief quicksort made by me
+//! \param[in] a - pointer on the array of structures with pointers on buffer
+//! \param[in] number_lines
+void qss (JOJO *a, int number_lines, int (*comparator)(const void*, const void*));
 
 //! \param[in] in - pointer on the file
 //! \return filesize of the given file
@@ -96,13 +110,20 @@ char *find_alnum (char *kek);
 //! \return pointer on the wanted character in the buffer
 char *find_alnum_reverse (char *kek);
 
-//! \brief
+//! \brief comparator for comparing two strings in alphabetical order
+//! \param[in] first - pointer on the first string
+//! \param[in] second - pointer on the second string
+//! \return 0 if strings are equal, 1 if first string is first in alphabetical order, -1 if first string is second in alphabetical order
 int comp_void (const void *first, const void *second);
 
+//! \brief comparator for comparing two strings in reverse alphabetical order
+//! \param[in] first - pointer on the first string
+//! \param[in] second - pointer on the second string
+//! \return 0 if strings are equal, 1 if first string is first in reverse alphabetical order, -1 if first string is second in reverse alphabetical order
 int comp_void_reverse (const void *first, const void *second);
 
-void pointers_struct_destructor (JOJO *pointers_struct);
-
+//! \brief free the memory used by TEXT structure
+//! \param[in] text - name of the element of the structure
 void TEXT_struct_destructor (TEXT *text);
 
 #endif // FUNCTIONS_H_INCLUDED

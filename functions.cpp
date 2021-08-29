@@ -136,10 +136,10 @@ void qss (JOJO *a, int number_lines, int (*comparator)(const void*, const void*)
         } while (left <= right);
 
         if (right > 0)
-            qss (a, right + 1, comp_void);
+            qss (a, right + 1, comparator);
 
         if (left < number_lines)
-            qss (a + left, number_lines - left, comp_void);
+            qss (a + left, number_lines - left, comparator);
 }
 
 
@@ -185,6 +185,7 @@ int comp_void (const void *first, const void *second) {
                 return -1;
             }
             else {
+
                 ++str1;
                 ++str2;
             }
@@ -207,7 +208,8 @@ int comp_void_reverse (const void *first, const void *second) {
     char *uno = ((JOJO *)first)  -> str;
     char *duo = ((JOJO *)second) -> str;
 
-       if (strcmp (uno, duo) == 0)
+
+    if (strcmp (uno, duo) == 0)
         return 0;
 
     char *str1 = uno + strlen (uno) - 1;
@@ -215,6 +217,7 @@ int comp_void_reverse (const void *first, const void *second) {
 
 
     while (str1 != uno && str2 != duo) {
+
 
             str1 = find_alnum_reverse (str1);
             str2 = find_alnum_reverse (str2);
@@ -229,6 +232,7 @@ int comp_void_reverse (const void *first, const void *second) {
                 return -1;
             }
             else {
+
                 --str1;
                 --str2;
             }
@@ -290,7 +294,7 @@ void output_ne_sorted (char* str, int num_lines, FILE *out) {
     return;
 }
 
-void ouput_separation (FILE *out) {
+void output_separation (FILE *out) {
 
     assert (out != NULL);
 
@@ -300,13 +304,12 @@ void ouput_separation (FILE *out) {
            "*****************************************************\n\n", out);
 }
 
-void pointers_struct_destructor (JOJO *pointers_struct) {
-
-    free (pointers_struct);
-
-}
 
 void TEXT_struct_destructor (TEXT *text) {
 
-    free (text);
+    free (text->buffer);
+    free (text->array_pointers);
+
+    text->filesize = 0;
+    text->number_lines = 0;
 }
