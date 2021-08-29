@@ -1,27 +1,6 @@
 #include "functions.h"
 
-void pointers_struct_destructor (JOJO *pointers_struct) {
-
-    free (pointers_struct);
-
-}
-
-void TEXT_struct_destructor (TEXT *text) {
-
-    free (text);
-}
-
-void ouput_separation (FILE *out) {
-
-    assert (out != NULL);
-
-    fputs ("\n*********************************************************************************"
-           "*******************************************************\n"
-           "***********************************************************************************"
-           "*****************************************************\n\n", out);
-}
-
-void TEXT_struct_fillin (TEXT* text, FILE *in_binary) {
+int TEXT_struct_fillin (TEXT* text, FILE *in_binary) {
 
     assert (text != NULL);
     assert (in_binary != NULL);
@@ -30,60 +9,29 @@ void TEXT_struct_fillin (TEXT* text, FILE *in_binary) {
     text->filesize = FILESIZE_FUNC_FSTAT (in_binary);
 
 
-    text->buffer = (char*)calloc(text->filesize + 1, sizeof(char));
-
-    assert (text->buffer != NULL);
-
+    if ((text->buffer = (char*)calloc(text->filesize + 1, sizeof(char))) == NULL)
+        return ERROR_IN_FILLIN_BUFFER;
 
 
-    if (fread (text->buffer, sizeof(char), text->filesize, in_binary) != text->filesize) {
 
-      puts ("ERROR IN READIN FROM FILE");
+    if (fread (text->buffer, sizeof(char), text->filesize, in_binary) != text->filesize)
+      return ERROR_IN_READING_FROM_FILE;
 
-      assert (0);
-    }
 
 
     text->number_lines = number_lines_in_buffer (text->buffer);
 
     text->buffer[text->filesize] = '\0';
+    text->array_pointers = (JOJO*)calloc(text->number_lines, sizeof (JOJO));
 
-    return;
-}
+    if (text->array_pointers == NULL) {
 
-
-void qss (JOJO *a, int first, int last) {
-
-    if (first < last)
-    {
-        int left = first, right = last;
-
-        char middle[100] = {};
-
-        strcpy (middle, a[(left + right) / 2].str);
-
-        do
-        {
-            while (comp_void (&a[left].str , &middle) < 0) left++;
-            while (comp_void (&a[right].str, &middle) > 0) right--;
-
-            if (left <= right)
-            {
-                char tmp[100] = {};
-                strcpy (tmp, a[left].str);
-                strcpy(a[left].str, a[right].str);
-                strcpy (a[right].str ,tmp);
-                left++;
-                right--;
-            }
-        } while (left <= right);
-
-        qss (a, first, right);
-
-        qss (a, left, last);
+      return ALLOCATION_MEMORY_ERROR;
     }
-}
 
+    pointers_struct_fillin (text->buffer, text->array_pointers, text->number_lines);
+    return 0;
+}
 
 
 size_t FILESIZE_FUNC_FSTAT (FILE *in) {
@@ -119,19 +67,10 @@ void pointers_struct_fillin (char* str, JOJO* array_sort, int number_lines) {
     assert (str != NULL);
     assert (array_sort != NULL);
 
-        char *start = str;
-        char *finish = NULL;
+    char *start  = str;
+    char *finish = NULL;
 
-    for (int i = 0; i < number_lines; ++i) {
-
-        if (i == number_lines - 1) {
-
-        array_sort[i].str = start;
-        array_sort[i].len_str = strlen (array_sort[i].str);
-
-        return;
-
-        }
+    for (int i = 0; i < number_lines - 1; ++i) {
 
         char *finish = strchr (start, '\n');
 
@@ -142,6 +81,9 @@ void pointers_struct_fillin (char* str, JOJO* array_sort, int number_lines) {
 
         start = finish + 1;
     }
+
+    array_sort[number_lines - 1].str = start;
+    array_sort[number_lines - 1].len_str = strlen (array_sort[number_lines - 1].str);
 }
 
 
@@ -149,52 +91,57 @@ void pointers_struct_BUBBLE (JOJO *str, int lines, int (*comparator)(const void*
 
     assert (str != NULL);
 
-     for (int i = 1; i < lines; ++i) {
+    JOJO s = {};
 
-        JOJO s = {};
+    for (int i = 1; i < lines; ++i) {
 
         for (int j = 0; j < lines - i; ++j) {
 
-              if (comparator (&str[j], &str[j + 1]) == 1) {
+            if (comparator (&str[j], &str[j + 1]) == 1) {
 
-                    s = str[j];
-                    str[j] = str[j + 1];
-                    str[j + 1] = s;
+                s = str[j];
+                str[j] = str[j + 1];
+                str[j + 1] = s;
             }
         }
     }
 }
 
 
-void output_sorted (JOJO *str, int num_lines, FILE *out) {
+void qss (JOJO *a, int number_lines, int (*comparator)(const void*, const void*)) {
 
-    assert (str != NULL);
-    assert (out != NULL);
+        int left = 0, right = number_lines - 1;
 
-    for (int i = 0; i < num_lines; ++i) {
+        JOJO middle = a[number_lines / 2];
 
-        fputs (str[i].str, out);
-        //fputc ('\n', out);
-    }
-    return;
+        JOJO tmp = {};
+
+        do
+        {
+           while (comparator (&a[left], &middle) < 0){
+                left++;
+             }
+            while  (comparator (&a[right], &middle) > 0)
+                right--;
+            if (left <= right)
+
+            {
+                tmp = a[left];
+                a[left] = a[right];
+                a[right] = tmp;
+
+                left++;
+                right--;
+            }
+        } while (left <= right);
+
+        if (right > 0)
+            qss (a, right + 1, comp_void);
+
+        if (left < number_lines)
+            qss (a + left, number_lines - left, comp_void);
 }
 
-
-void output_ne_sorted (char* str, int num_lines, FILE *out) {
-
-    assert (str != NULL);
-    assert (out != NULL);
-
-    for (int i = 0; i < num_lines; ++i) {
-
-        fputs (str, out);
-        //fputc ('\n', out);
-        str = strchr (str, '\0') + 1;
-    }
-    fputc ('\n', out);
-
-    return;
-}
 
 
 char *find_alnum (char *ch) {
@@ -203,7 +150,7 @@ char *find_alnum (char *ch) {
 
         while (1) {
 
-            if (isalnum (*ch))
+            if (isalnum ((int)(unsigned char)*ch) && *ch != '\0' && *ch != ' ')
                     return ch;
 
             else
@@ -220,6 +167,8 @@ int comp_void (const void *first, const void *second) {
     char *str1 = ((JOJO *)first)  -> str;
     char *str2 = ((JOJO *)second) -> str;
 
+    if (strcmp (str1, str2) == 0)
+        return 0;
 
     while (*str1 != '\0' && *str2 != '\0') {
 
@@ -257,6 +206,9 @@ int comp_void_reverse (const void *first, const void *second) {
 
     char *uno = ((JOJO *)first)  -> str;
     char *duo = ((JOJO *)second) -> str;
+
+       if (strcmp (uno, duo) == 0)
+        return 0;
 
     char *str1 = uno + strlen (uno) - 1;
     char *str2 = duo + strlen (duo) - 1;
@@ -299,7 +251,7 @@ char *find_alnum_reverse (char *ch) {
 
         while (1) {
 
-            if (isalnum (*ch))
+           if (isalnum ((int)(unsigned char)*ch) && *ch != '\0' && *ch != ' ')
                     return ch;
 
             else
@@ -308,25 +260,53 @@ char *find_alnum_reverse (char *ch) {
 }
 
 
-void pointers_struct_BUBBLE_reverse (JOJO *str, int lines) {
+void output_sorted (JOJO *str, int num_lines, FILE *out) {
 
     assert (str != NULL);
+    assert (out != NULL);
 
-     for (int i = 1; i < lines; ++i) {
+    for (int i = 0; i < num_lines; ++i) {
 
-            JOJO s = {};
-
-        for (int j = 0; j < lines - i; ++j) {
-
-              if (comp_void_reverse (&str[j], &str[j+1]) == 1) {
-
-                    s = str[j];
-
-                    str[j] = str[j+1];
-
-                    str[j+1] = s;
-
-            }
-        }
+        fputs (str[i].str, out);
+        fputc ('\n', out);
     }
+    return;
+}
+
+
+void output_ne_sorted (char* str, int num_lines, FILE *out) {
+
+    assert (str != NULL);
+    assert (out != NULL);
+
+    for (int i = 0; i < num_lines; ++i) {
+
+        fputs (str, out);
+        fputc ('\n', out);
+        str = strchr (str, '\0') + 1;
+    }
+    //fputc ('\n', out);
+
+    return;
+}
+
+void ouput_separation (FILE *out) {
+
+    assert (out != NULL);
+
+    fputs ("\n*********************************************************************************"
+           "*******************************************************\n"
+           "***********************************************************************************"
+           "*****************************************************\n\n", out);
+}
+
+void pointers_struct_destructor (JOJO *pointers_struct) {
+
+    free (pointers_struct);
+
+}
+
+void TEXT_struct_destructor (TEXT *text) {
+
+    free (text);
 }

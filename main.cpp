@@ -2,63 +2,84 @@
 
 int main (void) {
 
+    setlocale (LC_ALL, "ru_RU.cp1251");
+
     FILE *in_binary = fopen ("HAMLET.txt", "rb");
 
     if ( in_binary == NULL) {
 
-        puts ("FILE_INPUT_NOT_FOUND");
+        printf ("FILE_INPUT_NOT_FOUND\n");
 
         return ERROR_FILE_INPUT_INCORRECT;
     }
 
-    TEXT text = {};
 
-    TEXT_struct_fillin (&text, in_binary);
+    TEXT text = {};
+    int error = TEXT_struct_fillin (&text, in_binary);
+
+    if (error == ERROR_IN_READING_FROM_FILE) {
+
+        printf ("ERROR_IN_READING_FROM_FILE\n");
+
+        return ERROR_IN_READING_FROM_FILE;
+    }
+
+    else if (error == ERROR_IN_FILLIN_BUFFER) {
+
+        printf ("ERROR_IN_FILLIN_BUFFER\n");
+
+        return ERROR_IN_FILLIN_BUFFER;
+    }
+
+    else if (error == ALLOCATION_MEMORY_ERROR) {
+        puts ("ERROR IN MEMORY ALLOCATION");
+
+        return ALLOCATION_MEMORY_ERROR;
+    }
 
     fclose (in_binary);
 
 
+    //—Œ–“»–Œ¬ ¿ œŒ ¿À‘¿¬»“”
+    //Ò‚ÓÈ qsort
+    //qss (text.array_pointers, text.number_lines, comp_void);
 
-    JOJO *pointers_struct = (JOJO*)calloc(text.number_lines, sizeof (JOJO));
+    //Ò‚ÓÈ ·‡·Î
+    // pointers_struct_BUBBLE (text.array_pointers, text.number_lines, comp_void);
 
-    if (pointers_struct == NULL) {
-
-      puts ("ERROR IN MEMORY ALLOCATION");
-
-      return ALLOCATION_MEMORY_ERROR;
-    }
-
-    pointers_struct_fillin (text.buffer, pointers_struct, text.number_lines);
-
-
-    //qss (pointers_struct, 0, text.number_lines);
-
-    //pointers_struct_BUBBLE (pointers_struct, text.number_lines, comp_void);
-
-    qsort (pointers_struct, text.number_lines, sizeof (JOJO), comp_void);
+    //‚ÒÚÓÂÌÌ˚È qsort
+    qsort (text.array_pointers, text.number_lines, sizeof (JOJO), comp_void);
 
 
     FILE *out = fopen ("HAMLET_SORTED.txt", "w");
+
     if (out == NULL) {
 
-        puts ("FILE_INPUT_NOT_FOUND");
+        puts ("FILE_OUTPUT_NOT_FOUND");
 
         return ERROR_FILE_OUTPUT_INCORRECT;
     }
 
-    output_sorted (pointers_struct, text.number_lines, out);
+
+    //¬€¬Œƒ Œ“—Œ–“»–Œ¬¿ÕÕŒ√Œ œŒ ¿À‘¿¬»“”
+    output_sorted (text.array_pointers, text.number_lines, out);
     ouput_separation (out);
     output_ne_sorted (text.buffer, text.number_lines, out);
     ouput_separation (out);
 
+
+    //—Œ–“»–Œ¬ ¿ Œ¡–¿“Õ¿ﬂ
     //qsort (pointers_struct, text.number_lines, sizeof (JOJO), comp_void_reverse);
-    pointers_struct_BUBBLE_reverse (pointers_struct, text.number_lines);
-    output_sorted (pointers_struct, text.number_lines, out);
+    pointers_struct_BUBBLE (text.array_pointers, text.number_lines, comp_void_reverse);
+
+
+    //¬€¬Œƒ Œ¡–¿“Õ¿ﬂ —Œ–“»–Œ¬ ¿
+    output_sorted (text.array_pointers, text.number_lines, out);
 
     fclose (out);
 
-    pointers_struct_destructor (pointers_struct);
-    TEXT_struct_destructor (&text);
+    //pointers_struct_destructor (pointers_struct);
+    //TEXT_struct_destructor (&text);
 
-return 0;
+    return 0;
 }
