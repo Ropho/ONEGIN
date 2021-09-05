@@ -108,7 +108,7 @@ char *find_alnum (char *kek);
 //! \brief finds the character in the buffer, which is a number or a letter. Goes from end of the buffer to the start
 //! \param[in] kek - pointer on the element of the buffer
 //! \return pointer on the wanted character in the buffer
-char *find_alnum_reverse (char *kek);
+char *find_alnum_reverse (char *kek, char *endo);
 
 //! \brief comparator for comparing two strings in alphabetical order
 //! \param[in] first - pointer on the first string

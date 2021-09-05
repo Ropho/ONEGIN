@@ -205,22 +205,27 @@ int comp_void_reverse (const void *first, const void *second) {
     assert (first  != NULL);
     assert (second != NULL);
 
-    char *uno = ((JOJO *)first)  -> str;
-    char *duo = ((JOJO *)second) -> str;
+    char *uno = ((JOJO *)first) -> str;
+    char *duo = ((JOJO *)second)-> str;
 
 
     if (strcmp (uno, duo) == 0)
         return 0;
 
-    char *str1 = uno + strlen (uno) - 1;
-    char *str2 = duo + strlen (duo) - 1;
+    char *str1 = uno + ((JOJO *)first) ->len_str - 1;
+    char *str2 = duo + ((JOJO *)second)->len_str - 1;
 
 
     while (str1 != uno && str2 != duo) {
 
 
-            str1 = find_alnum_reverse (str1);
-            str2 = find_alnum_reverse (str2);
+            str1 = find_alnum_reverse (str1, uno);
+            str2 = find_alnum_reverse (str2, duo);
+
+            if (isalnum (*str1) == 0)
+                return 1;
+            if (isalnum (*str2) == 0)
+                return -1;
 
             if (*str1 > *str2) {
 
@@ -249,17 +254,22 @@ int comp_void_reverse (const void *first, const void *second) {
 
 
 
-char *find_alnum_reverse (char *ch) {
+char *find_alnum_reverse (char *ch, char *endo) {
 
     assert (ch != NULL);
 
         while (1) {
 
-           if (isalnum ((int)(unsigned char)*ch) && *ch != '\0' && *ch != ' ')
+           if (isalnum ((int)(unsigned char)*ch) && *ch != '\0')
                     return ch;
 
-            else
-                --ch;
+            else {
+
+                if (ch == endo)
+                    return ch;
+
+                    --ch;
+            }
         }
 }
 
@@ -272,7 +282,7 @@ void output_sorted (JOJO *str, int num_lines, FILE *out) {
     for (int i = 0; i < num_lines; ++i) {
 
         fputs (str[i].str, out);
-        fputc ('\n', out);
+        //fputc ('\n', out);
     }
     return;
 }

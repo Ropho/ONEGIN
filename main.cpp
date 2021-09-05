@@ -4,7 +4,7 @@ int main (void) {
 
     setlocale (LC_ALL, "ru_RU.cp1251");
 
-    FILE *in_binary = fopen ("E_HAMLET.txt", "rb");
+    FILE *in_binary = fopen ("HAMLET.txt", "rb");
 
     if ( in_binary == NULL) {
 
@@ -39,18 +39,13 @@ int main (void) {
 
     fclose (in_binary);
 
-    ////////////////////////////////
-    // ÑÎĞÒÈĞÎÂÎ×ÊÀ ÏÎ ÀËÔÀÂÈÒÈÊÓ //
-    //      (íà îòëè÷íåíüêî)      //
-    ////////////////////////////////
 
-    //ñâîé qsort
     qss (text.array_pointers, text.number_lines, comp_void);
 
-    //ñâîé áàáë
+
     // pointers_struct_BUBBLE (text.array_pointers, text.number_lines, comp_void);
 
-    //âñòğîåííûé qsort
+
     //qsort (text.array_pointers, text.number_lines, sizeof (JOJO), comp_void);
 
     FILE *out = fopen ("HAMLET_SORTED.txt", "w");
@@ -62,22 +57,19 @@ int main (void) {
         return ERROR_FILE_OUTPUT_INCORRECT;
     }
 
-    //ÂÛÂÎÄ ÎÒÑÎĞÒÈĞÎÂÀÍÍÎÃÎ ÏÎ ÀËÔÀÂÈÒÓ
     output_sorted (text.array_pointers, text.number_lines, out);
     output_separation (out);
     output_ne_sorted (text.buffer, text.number_lines, out);
     output_separation (out);
 
 
-    //ÑÎĞÒÈĞÎÂÊÀ ÎÁĞÀÒÍÀß
-    //âñòğîåííàÿ qsort
-    //qsort (text.array_pointers, text.number_lines, sizeof (JOJO), comp_void_reverse);
-    //áàáë ñîğò
-    pointers_struct_BUBBLE (text.array_pointers, text.number_lines, comp_void_reverse);
-    //ñâîé qsort
+    qsort (text.array_pointers, text.number_lines, sizeof (JOJO), comp_void_reverse);
+
+    //pointers_struct_BUBBLE (text.array_pointers, text.number_lines, comp_void_reverse);
+
     //qss (text.array_pointers, text.number_lines, comp_void_reverse);
 
-    //ÂÛÂÎÄ ÎÁĞÀÒÍÀß ÑÎĞÒÈĞÎÂÊÀ
+
     output_sorted (text.array_pointers, text.number_lines, out);
 
     fclose (out);
@@ -86,4 +78,3 @@ int main (void) {
 
     return 0;
 }
-
